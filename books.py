@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Body ,  FastAPI
 
 app = FastAPI()
 
@@ -24,7 +24,7 @@ async def read_book(book_title : str):
         
         
 
-# query parameter  =====================
+# query parameter (GET)  =====================
 
 @app.get("/books/")
 async def read_category_query_para(category : str):
@@ -41,9 +41,11 @@ async def read_author_and_category_query(books_author : str  ,category: str ):
     return books_to_return
 
 
+# POST HTTP Request ====================================
         
-        
-        
+@app.post("/books/create_book")  
+async def create_book(new_book = Body()):
+    return BOOKS.append(new_book)   
         
         
         
