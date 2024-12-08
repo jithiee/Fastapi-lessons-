@@ -4,7 +4,7 @@ app = FastAPI()
 
 BOOKS = [
     {'title': 'title one'  , 'author' : 'Author one'  , 'category' : 'science'},
-    {'title': 'title two'  , 'author' : 'Author two'  , 'category' : 'science'},
+    {'title': 'title two'  , 'author' : 'Author one'  , 'category' : 'math'},
     {'title': 'title three'  , 'author' : 'Author three'  , 'category' : 'history'},
     {'title': 'title four'  , 'author' : 'Author four'  , 'category' : 'math'},
     {'title': 'title five'  , 'author' : 'Author five'  , 'category' : 'math'},
@@ -56,12 +56,26 @@ async def update_books(update_book = Body()):
     for i in range(len(BOOKS)):
         if BOOKS[i].get('title').casefold() == update_book.get("title").casefold():
             BOOKS[i] = update_book
+     
+     
+# DELETE HTTP Request ====================================       
+            
+@app.delete("/books/delete_book/{books_title}")
+async def delete_book(books_title : str):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].get("title").casefold() == books_title.casefold():
+            BOOKS.pop(i)
+            break
         
         
         
+@app.get("/books/byauthor/{books_authors}/")
+async def all_books_spic_author(books_authors: str):
+    books_to_return = [ books for books in BOOKS  if books.get("author").casefold()  == books_authors.casefold() ]
+    return books_to_return
         
-        
-        
+   
+
         
         
         
