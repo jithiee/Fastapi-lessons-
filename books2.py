@@ -38,7 +38,9 @@ class Books_request(BaseModel):
     description : str  = Field(min_length=1 , max_length=100)
     rating: int = Field(gt=0 , lt= 6)
     
-    # Example Value for swager docs 
+    # Example Value for swager docs
+    # to create a more descripive request within our Swagger documentaion 
+    
     model_config = {
         "json_schema_extra":{
             "example": {
@@ -60,6 +62,22 @@ class Books_request(BaseModel):
 @app.get("/books")
 async def read_all_books():
     return BOOKS
+
+#get books with id   (query parameter) =====
+
+@app.get("/books/{book_id}")
+async def read_book(book_id : int):
+    for b in BOOKS:
+        if b.id == book_id:
+            return b
+        
+        
+# get book with rating  (Path parameter) ======
+
+@app.get("/books/")
+async def read_book_by_rating(book_rating : int):
+    books_to_return = [book for book in BOOKS if book.rating == book_rating  ]
+    return books_to_return
 
 
 # create new books =====
