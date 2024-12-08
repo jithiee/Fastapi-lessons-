@@ -1,8 +1,10 @@
 from fastapi import FastAPI , Body
 from pydantic import BaseModel ,Field
+from typing import Optional
 
 app = FastAPI()
 
+# Pydantic Model for Book
 class Book:
     id : int 
     title : str
@@ -28,13 +30,30 @@ BOOKS = [
 ]
 
 
-
+# Pydantic Model for POST Requests
 class Books_request(BaseModel):
-    id :int 
-    title : str = Field(min_length=5)
+    id :Optional[int] = Field(description="ID is not needed on create " , default=None)  #  Optional field, auto-generated   it may int or none / null  type 
+    title : str = Field(min_length=3)
     author : str = Field(min_length=1)
-    description : str  = Field(min_length=1 , max_length=5)
+    description : str  = Field(min_length=1 , max_length=100)
     rating: int = Field(gt=0 , lt= 6)
+    
+    # Example Value for swager docs 
+    model_config = {
+        "json_schema_extra":{
+            "example": {
+                    "title": "A new Book",
+                    "description": "A new Description of a Book",
+                    "author": "jithin",
+                    "rating": 5
+            }
+          
+        }
+    }
+    
+    
+    
+    
    
 # get all books  ===========
 
@@ -46,17 +65,19 @@ async def read_all_books():
 # create new books =====
 
 @app.post("/create_books")
-async def create_new_books(book_request = Books_request ):
+async def create_new_books(book_request : Books_request ):
+    # Create a new book object
     new_books = Book(**book_request.model_dump())    # converting the request to Book object
-    BOOKS.append(find_book_id(new_books))
+    new_books.id = BOOKS[-1].id + 1 if BOOKS else 1  # Auto-generate ID
+    BOOKS.append(new_books)
     
-def find_book_id(book: Book):
-    if len(Book) > 0 :
-        book.id = BOOKS[-1].id + 1 
-    else:
-        book.id = 1 
+# def find_book_id(book: Book):
+#     if len(BOOKS) > 0 :
+#         book.id = BOOKS[-1].id + 1 
+#     else:
+#         book.id = 1 
      
-    return book
+#     return book
      
     
   
