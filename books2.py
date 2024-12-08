@@ -11,20 +11,22 @@ class Book:
     description : str 
     author : str 
     rating: int 
-    def __init__(self , id , title ,description ,author  , rating ):
+    published_date: int
+    def __init__(self , id , title ,description ,author  , rating , publish_date ):
         self.id = id  
         self.title = title 
         self.description = description 
         self.author = author 
         self.rating = rating
+        self.published_date = publish_date
         
 BOOKS = [
-    Book(  1 ,  "this is first books" , 'fantasy books' , 'author one' ,  5), 
-    Book( 2 ,  "this is second books" , 'horror books' , 'author two' ,  4), 
-    Book(  3 ,  "this is therd books" , 'classic books' , 'author three' ,  1), 
-    Book( 4 ,  "this is fourth books" , 'magic books' , 'author four' ,  5), 
-    Book( 5 ,  "this is fifth books" , 'comedy books' , 'author five' ,  2), 
-    Book( 6 ,  "this is sixth books" , 'drama books' , 'author six' ,  3), 
+    Book(  1 ,  "this is first books" , 'fantasy books' , 'author one' ,  5 , 2012), 
+    Book( 2 ,  "this is second books" , 'horror books' , 'author two' ,  4  , 2012), 
+    Book(  3 ,  "this is therd books" , 'classic books' , 'author three' ,  1, 2015), 
+    Book( 4 ,  "this is fourth books" , 'magic books' , 'author four' ,  5 , 2014), 
+    Book( 5 ,  "this is fifth books" , 'comedy books' , 'author five' ,  2 , 2010), 
+    Book( 6 ,  "this is sixth books" , 'drama books' , 'author six' ,  3 , 2016), 
     
     
 ]
@@ -38,22 +40,24 @@ class Books_request(BaseModel):
     author : str = Field(min_length=1)
     description : str  = Field(min_length=1 , max_length=100)
     rating: int = Field(gt=0 , lt= 6)
+    published_date : int = Field(gt=1999 , lt=2050)
     
     # Example Value for swager docs
     # to create a more descripive request within our Swagger documentaion 
-    
-    model_config = {
-        "json_schema_extra":{
-            "example": {
-                    "title": "A new Book",
-                    "description": "A new Description of a Book",
-                    "author": "jithin",
-                    "rating": 5
+
+     
+    class Config:
+           schema_extra = {
+                "example": {
+                        "title": "A new Book",
+                        "description": "A new Description of a Book",
+                        "author": "jithin",
+                        "rating": 5 ,
+                        "publish_date": 2029
+                }
+            
             }
-          
-        }
-    }
-    
+     
     
     
     
@@ -117,6 +121,10 @@ async def delete_book(book_id : int):
             break 
   
     
+@app.get("/books/publish_date/{publish}")
+async def read_book_by_publish_date(publish_date : int):
+    books_to_return = [ books for books in BOOKS if books.published_date == publish_date ]
+    return books_to_return
     
     
 
