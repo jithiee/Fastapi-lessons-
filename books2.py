@@ -30,7 +30,8 @@ BOOKS = [
 ]
 
 
-# Pydantic Model for POST Requests
+# Pydantic (validation) Model for POST Requests 
+
 class Books_request(BaseModel):
     id :Optional[int] = Field(description="ID is not needed on create " , default=None)  #  Optional field, auto-generated   it may int or none / null  type 
     title : str = Field(min_length=3)
@@ -97,6 +98,14 @@ async def create_new_books(book_request : Books_request ):
      
 #     return book
      
+     
+# update books ==================
+
+@app.put("/books/update_book")
+async def update_books(book : Books_request):
+     for i in range(len(BOOKS)):
+         if BOOKS[i].id == book.id:
+             BOOKS[i] = book
     
   
     
