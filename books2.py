@@ -1,4 +1,5 @@
 from fastapi import FastAPI , Body
+from pydantic import BaseModel ,Field
 
 app = FastAPI()
 
@@ -27,6 +28,14 @@ BOOKS = [
 ]
 
 
+
+class Books_request(BaseModel):
+    id :int 
+    title : str = Field(min_length=5)
+    author : str = Field(min_length=1)
+    description : str  = Field(min_length=1 , max_length=5)
+    rating: int = Field(gt=0 , lt= 6)
+   
 # get all books  ===========
 
 @app.get("/books")
@@ -37,6 +46,23 @@ async def read_all_books():
 # create new books =====
 
 @app.post("/create_books")
-async def create_new_books(create_books = Body()):
-    BOOKS.append(create_books)
+async def create_new_books(book_request = Books_request ):
+    new_books = Book(**book_request.model_dump())    # converting the request to Book object
+    BOOKS.append(find_book_id(new_books))
+    
+def find_book_id(book: Book):
+    if len(Book) > 0 :
+        book.id = BOOKS[-1].id + 1 
+    else:
+        book.id = 1 
+     
+    return book
+     
+    
+  
+    
+    
+    
+
+
 
