@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI , Body
 
 app = FastAPI()
 
@@ -36,4 +36,7 @@ async def read_all_books():
 
 # create new books =====
 
+@app.post("/create_books")
+async def create_new_books(create_books = Body()):
+    BOOKS.append(create_books)
 
