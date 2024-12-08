@@ -107,6 +107,14 @@ async def update_books(book : Books_request):
          if BOOKS[i].id == book.id:
              BOOKS[i] = book
     
+# delete books =======================
+
+@app.delete("/books/{book_id}")
+async def delete_book(book_id : int):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].id == book_id :
+            BOOKS.pop(i)
+            break 
   
     
     
