@@ -12,6 +12,45 @@ BOOKS = [
 ]
 
 
-@app.get('/books')
-def get_all_books():
+@app.get("/books")
+async def get_all_books():
     return BOOKS
+
+@app.get("/books/{book_title}")
+async def read_book(book_title : str):
+    for books in BOOKS:
+        if books.get('title').casefold() == book_title.casefold():
+            return books
+        
+        
+
+# query parameter  =====================
+
+@app.get("/books/")
+async def read_category_query_para(category : str):
+    books_to_return = [books for books in BOOKS if books.get('category').casefold() ==  category.casefold()  ]
+    return books_to_return
+
+
+@app.get("/books/{books_author}/")
+async def read_author_and_category_query(books_author : str  ,category: str ):
+    books_to_return = [books for books in BOOKS if books.get("author").casefold() == books_author.casefold()  and 
+                       
+                      books.get("category").casefold() == category.casefold()   ]
+    
+    return books_to_return
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
