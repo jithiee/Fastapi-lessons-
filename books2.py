@@ -1,4 +1,4 @@
-from fastapi import FastAPI , Body , Path , Query
+from fastapi import FastAPI , Body , Path , Query , HTTPException
 from pydantic import BaseModel ,Field
 from typing import Optional
 
@@ -75,6 +75,7 @@ async def read_book(book_id : int = Path(gt=0 , description="Input should be gre
     for b in BOOKS:
         if b.id == book_id:
             return b
+    raise HTTPException(status_code=404 , detail="item not found")
         
         
 # get book with rating  (query parameter) ======
@@ -105,25 +106,40 @@ async def create_new_books(book_request : Books_request ):
      
 # update books ==================
 
+
+
 @app.put("/books/update_book")
 async def update_books(book : Books_request):
-     for i in range(len(BOOKS)):
-         if BOOKS[i].id == book.id:
+    book_chnage = False
+    for i in range(len(BOOKS)):
+        if BOOKS[i].id == book.id:
              BOOKS[i] = book
+             book_chnage = True
+    if not book_chnage :
+        raise HTTPException (status_code= 404 , detail= "item not found")
+             
+             
+             
     
 # delete books =======================
 
 @app.delete("/books/{book_id}")
 async def delete_book(book_id : int = Path(gt= 0)):
+    book_change = False 
     for i in range(len(BOOKS)):
         if BOOKS[i].id == book_id :
             BOOKS.pop(i)
+            book_change = True
             break 
+    if not book_change :
+         raise HTTPException(status_code=404 , detail="item not found")
   
     
 @app.get("/books/publish_date/{publish}")
 async def read_book_by_publish_date(publish_date : int ):
-    books_to_return = [ books for books in BOOKS if books.published_date == publish_date ]
+    books_to_return = [ books  for books in BOOKS if books.published_date == publish_date  ]
+    if not books_to_return:
+        raise HTTPException(status_code=404 , detail= 'itme not found' )
     return books_to_return
     
     
